@@ -112,9 +112,9 @@
       </main>
     </div>
 
-    <script src="./genesis-data.js" defer></script>
+    <script src="./genesis-data.js"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      function initBibleReader() {
         const bookList = document.getElementById('book-list');
         const chapterList = document.getElementById('chapter-list');
         const passageTitle = document.getElementById('passage-title');
@@ -156,7 +156,7 @@
             chapterButton.type = 'button';
             chapterButton.className = `chapter${state.activeChapter === chapterData.chapter ? ' active' : ''}`;
             chapterButton.dataset.chapter = String(chapterData.chapter);
-            chapterButton.textContent = `Chapter ${chapterData.chapter}`;
+            chapterButton.textContent = String(chapterData.chapter);
             chapterList.append(chapterButton);
           });
         }
@@ -206,7 +206,13 @@
         renderBooks();
         renderChapters();
         renderPassage();
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBibleReader);
+      } else {
+        initBibleReader();
+      }
     </script>
   </body>
 </html>
