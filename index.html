@@ -3,80 +3,178 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>StyleAndStitch</title>
+    <title>Bible Study: God's Truth Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --bg: #f8f4ff;
-        --surface: #ffffff;
-        --text: #30243d;
-        --muted: #6f5c82;
-        --accent: #7c3aed;
-        --accent-dark: #6025c8;
-        --border: #e9ddff;
+        --page-bg: #ece5d8;
+        --sidebar-surface: #253b42;
+        --sidebar-border: #3c5961;
+        --sidebar-text: #e8f1f2;
+        --sidebar-muted: #b8ced3;
+        --accent: #c9aa5d;
+        --ink: #2f271d;
+        --ink-soft: #605344;
       }
-
-      * {
-        box-sizing: border-box;
-      }
-
+      * { box-sizing: border-box; }
       body {
         margin: 0;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 2rem 1rem;
         font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background: radial-gradient(circle at top right, #f0e6ff 0%, var(--bg) 40%, #f6f6ff 100%);
-        color: var(--text);
+        background: radial-gradient(circle at top, #f8f3e9 0%, var(--page-bg) 55%, #ddd1bc 100%);
+        color: var(--ink);
       }
-
-      .hero {
-        width: min(760px, 100%);
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: clamp(1.5rem, 3vw, 2.5rem);
-        box-shadow: 0 16px 50px rgba(58, 22, 96, 0.12);
-        text-align: center;
+      .app-shell { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+      .sidebar {
+        background: linear-gradient(180deg, #1d2f35 0%, #17272d 100%);
+        border-right: 1px solid rgba(255,255,255,.08);
+        padding: 1.25rem;
+        display: grid;
+        gap: 1.25rem;
       }
-
-      h1 {
-        margin: 0 0 0.6rem;
-        font-size: clamp(1.75rem, 3vw, 2.5rem);
+      .brand h1 { margin: 0; font-size: 1.25rem; color: var(--sidebar-text); }
+      .brand p { margin: .4rem 0 0; color: var(--sidebar-muted); font-size: .9rem; }
+      .nav-group h2 { margin: 0 0 .65rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--sidebar-muted); }
+      .book-list, .chapter-list { display: grid; gap: .45rem; }
+      .book, .chapter {
+        border: 1px solid var(--sidebar-border);
+        border-radius: 10px;
+        background: var(--sidebar-surface);
+        color: var(--sidebar-text);
+        padding: .6rem .75rem;
+        text-align: left;
+        font: inherit;
+        font-size: .95rem;
+        cursor: pointer;
       }
-
-      p {
-        margin: 0 auto 1.25rem;
-        max-width: 62ch;
-        color: var(--muted);
-        line-height: 1.6;
+      .book.active, .chapter.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+      .content { padding: clamp(1rem,2vw,2rem); display: grid; align-content: start; }
+      .reading-panel {
+        max-width: 960px;
+        width: 100%;
+        margin: 0 auto;
+        padding: clamp(1.25rem,2.5vw,2.5rem);
+        border-radius: 16px;
+        border: 1px solid rgba(116,95,67,.4);
+        background:
+          radial-gradient(circle at 15% 15%, rgba(255,255,255,.5), transparent 38%),
+          radial-gradient(circle at 85% 75%, rgba(188,153,102,.14), transparent 42%),
+          repeating-linear-gradient(-15deg, rgba(120,98,71,.04), rgba(120,98,71,.04) 3px, rgba(245,231,206,.04) 3px, rgba(245,231,206,.04) 6px),
+          linear-gradient(180deg, #f8eed8 0%, #efdfc4 100%);
+        box-shadow: 0 18px 40px rgba(54,39,19,.14);
       }
-
-      .cta-button {
-        display: inline-block;
-        text-decoration: none;
-        border-radius: 12px;
-        padding: 0.85rem 1.25rem;
-        font-weight: 700;
-        color: #fff;
-        background: linear-gradient(180deg, var(--accent), var(--accent-dark));
-      }
-
-      .cta-button:hover {
-        filter: brightness(1.04);
+      .reading-header h2 { margin: 0; font-size: clamp(1.45rem,2.5vw,2rem); }
+      .reading-header p { margin: .35rem 0 1.2rem; color: var(--ink-soft); }
+      .scripture { font-family: "Crimson Text", Georgia, "Times New Roman", serif; font-size: clamp(1.15rem,1.55vw,1.4rem); line-height: 1.8; }
+      .verse { margin: 0 0 1rem; }
+      .verse-num { font-weight: 700; margin-right: .45rem; color: #7f5f31; }
+      @media (max-width: 900px) {
+        .app-shell { grid-template-columns: 1fr; }
+        .sidebar { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+        .book-list, .chapter-list {
+          grid-auto-flow: column;
+          grid-auto-columns: minmax(130px,1fr);
+          overflow-x: auto;
+          padding-bottom: .25rem;
+        }
       }
     </style>
   </head>
   <body>
-    <main class="hero">
-      <h1>StyleAndStitch</h1>
-      <p>
-        Explore virtual styling ideas and stitch pattern workflows. Start with a quick contact form to
-        share your needs, feedback, or collaboration ideas.
-      </p>
-      <a href="contact.html">
-        <button class="cta-button">Get Started</button>
-      </a>
-    </main>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Bible navigation">
+        <section class="brand">
+          <h1>Bible Study: God's Truth Edition</h1>
+          <p>Browse books and chapters to begin your devotional reading.</p>
+        </section>
+        <section class="nav-group">
+          <h2>Books</h2>
+          <div class="book-list" id="book-list"></div>
+        </section>
+        <section class="nav-group">
+          <h2>Chapters</h2>
+          <div class="chapter-list" id="chapter-list"></div>
+        </section>
+      </aside>
+      <main class="content">
+        <article class="reading-panel" aria-label="Scripture reading area">
+          <header class="reading-header">
+            <h2 id="passage-title"></h2>
+            <p id="passage-subtitle">King James Version</p>
+          </header>
+          <section class="scripture" id="scripture-verses"></section>
+        </article>
+      </main>
+    </div>
+
+    <script src="genesis-data.js"></script>
+    <script>
+      const bookList = document.getElementById('book-list');
+      const chapterList = document.getElementById('chapter-list');
+      const passageTitle = document.getElementById('passage-title');
+      const scriptureVerses = document.getElementById('scripture-verses');
+
+      const state = { activeBook: null, activeChapter: 1 };
+
+      function renderBooks() {
+        const books = [SCRIPTURE_DATA.book];
+        bookList.innerHTML = '';
+
+        books.forEach((bookName) => {
+          const bookButton = document.createElement('button');
+          bookButton.type = 'button';
+          bookButton.className = `book${state.activeBook === bookName ? ' active' : ''}`;
+          bookButton.textContent = bookName;
+          bookButton.addEventListener('click', () => {
+            state.activeBook = bookName;
+            state.activeChapter = 1;
+            renderBooks();
+            renderChapters();
+            renderPassage();
+          });
+          bookList.append(bookButton);
+        });
+      }
+
+      function renderChapters() {
+        chapterList.innerHTML = '';
+
+        SCRIPTURE_DATA.chapters.forEach((chapterData) => {
+          const chapterButton = document.createElement('button');
+          chapterButton.type = 'button';
+          chapterButton.className = `chapter${state.activeChapter === chapterData.chapter ? ' active' : ''}`;
+          chapterButton.textContent = chapterData.chapter;
+          chapterButton.addEventListener('click', () => {
+            state.activeChapter = chapterData.chapter;
+            renderChapters();
+            renderPassage();
+          });
+          chapterList.append(chapterButton);
+        });
+      }
+
+      function renderPassage() {
+        const chapter = SCRIPTURE_DATA.chapters[state.activeChapter - 1];
+        passageTitle.textContent = `${SCRIPTURE_DATA.book} ${chapter.chapter}`;
+
+        scriptureVerses.innerHTML = '';
+        chapter.verses.forEach((verse) => {
+          const verseParagraph = document.createElement('p');
+          verseParagraph.className = 'verse';
+          verseParagraph.innerHTML = `<span class="verse-num">${verse.verse}</span>${verse.text}`;
+          scriptureVerses.append(verseParagraph);
+        });
+      }
+
+      state.activeBook = SCRIPTURE_DATA.book;
+      renderBooks();
+      renderChapters();
+      renderPassage();
+    </script>
   </body>
 </html>
