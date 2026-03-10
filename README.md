@@ -4,7 +4,20 @@ Virtual styler and pattern stitch maker.
 
 ## Current project status
 
-This repository is currently a **very early scaffold**. Right now it only contains this README and a one-line concept statement, so there is not yet an application runtime, source tree, package manifest, or tests.
+This repository is currently a **very early scaffold**. It now includes a starter static `contact.html` page as an initial UI artifact, but there is not yet an application runtime, package manifest, or automated tests.
+
+## Available pages
+
+- `index.html` – a simple landing page with a **Get Started** button linking to `contact.html`.
+- `contact.html` – a responsive contact page for inquiries and feedback.
+
+To preview locally:
+
+```bash
+xdg-open index.html
+```
+
+(or open either file directly in your browser)
 
 ## Suggested structure as the project grows
 
@@ -18,7 +31,7 @@ When you start building, a practical baseline layout would be:
 
 ## Important things for newcomers to know
 
-1. There is no implemented code path yet, so your first contribution will likely define conventions.
+1. The first implemented page is a static contact form intended to seed UI conventions.
 2. The main project vision is fashion-focused tooling: virtual styling plus pattern/stitch generation.
 3. Early decisions you make now (language, framework, data model, testing strategy) will strongly shape future development speed.
 
