@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bible Study: God's Truth Edition</title>
+    <title>Radiant Word Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -12,207 +12,603 @@
     />
     <style>
       :root {
-        --page-bg: #ece5d8;
-        --sidebar-surface: #253b42;
-        --sidebar-border: #3c5961;
-        --sidebar-text: #e8f1f2;
-        --sidebar-muted: #b8ced3;
-        --accent: #c9aa5d;
-        --ink: #2f271d;
-        --ink-soft: #605344;
+        --bg: #f4f2ec;
+        --surface: #fffef9;
+        --ink: #1f2530;
+        --muted: #61697a;
+        --accent: #5a63f0;
+        --accent-soft: #e8e9ff;
+        --line: #dde1ea;
+        --success: #277950;
+        --warn: #b57922;
+        --danger: #ad2f4f;
+      }
+      :root[data-theme='dark'] {
+        --bg: #12151f;
+        --surface: #1a1f2e;
+        --ink: #f3f5fb;
+        --muted: #b4bdd4;
+        --accent: #96a4ff;
+        --accent-soft: #2b3250;
+        --line: #334063;
+        --success: #5ad294;
+        --warn: #f1bf72;
+        --danger: #ff8ca5;
       }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        background: radial-gradient(circle at top, #f8f3e9 0%, var(--page-bg) 55%, #ddd1bc 100%);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         color: var(--ink);
+        background: radial-gradient(circle at top, color-mix(in srgb, var(--bg) 88%, #ffffff 12%), var(--bg));
       }
-      .app-shell { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
-      .sidebar {
-        background: linear-gradient(180deg, #1d2f35 0%, #17272d 100%);
-        border-right: 1px solid rgba(255,255,255,.08);
-        padding: 1.25rem;
+      .shell {
         display: grid;
-        gap: 1.25rem;
+        grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) minmax(250px, 330px);
+        min-height: 100vh;
+        gap: 1rem;
+        padding: 1rem;
       }
-      .brand h1 { margin: 0; font-size: 1.25rem; color: var(--sidebar-text); }
-      .brand p { margin: .4rem 0 0; color: var(--sidebar-muted); font-size: .9rem; }
-      .nav-group h2 { margin: 0 0 .65rem; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--sidebar-muted); }
-      .book-list, .chapter-list { display: grid; gap: .45rem; }
-      .book, .chapter {
-        border: 1px solid var(--sidebar-border);
-        border-radius: 10px;
-        background: var(--sidebar-surface);
-        color: var(--sidebar-text);
-        padding: .6rem .75rem;
-        text-align: left;
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(13, 21, 40, 0.06);
+        overflow: hidden;
+      }
+      .left, .right { display: grid; align-content: start; }
+      .section { padding: 1rem; border-bottom: 1px solid var(--line); }
+      .section:last-child { border-bottom: 0; }
+      .label {
+        margin: 0 0 0.5rem;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      h1 { margin: 0; font-size: 1.25rem; }
+      .stack { display: grid; gap: 0.65rem; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; }
+      input, select, button, textarea {
         font: inherit;
-        font-size: .95rem;
+        color: inherit;
+      }
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: color-mix(in srgb, var(--surface) 90%, #ffffff 10%);
+        padding: 0.65rem 0.75rem;
+      }
+      textarea { min-height: 130px; resize: vertical; }
+      .btn {
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--surface) 88%, #ffffff 12%);
+        border-radius: 10px;
+        padding: 0.6rem 0.8rem;
+        cursor: pointer;
+        transition: 160ms ease;
+      }
+      .btn:hover { border-color: var(--accent); }
+      .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+      .btn.soft { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+      .btn.full { width: 100%; }
+      .tabs { display: flex; gap: 0.35rem; }
+      .tab { flex: 1; }
+      .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+      .status { margin-top: 0.55rem; color: var(--muted); font-size: 0.9rem; min-height: 1.25rem; }
+      .main { display: grid; grid-template-rows: auto 1fr; }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+      .topbar h2 { margin: 0; font-size: 1.25rem; }
+      .chip {
+        background: var(--accent-soft);
+        color: var(--ink);
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+      }
+      .passage {
+        padding: 1.1rem;
+        overflow: auto;
+      }
+      .verse {
+        font-family: 'Crimson Text', Georgia, serif;
+        font-size: clamp(1.08rem, 1.7vw, 1.28rem);
+        line-height: 1.8;
+        padding: 0.55rem 0.65rem;
+        border-radius: 10px;
+        border: 1px solid transparent;
         cursor: pointer;
       }
-      .book.active, .chapter.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
-      .content { padding: clamp(1rem,2vw,2rem); display: grid; align-content: start; }
-      .reading-panel {
-        max-width: 960px;
-        width: 100%;
-        margin: 0 auto;
-        padding: clamp(1.25rem,2.5vw,2.5rem);
-        border-radius: 16px;
-        border: 1px solid rgba(116,95,67,.4);
-        background:
-          radial-gradient(circle at 15% 15%, rgba(255,255,255,.5), transparent 38%),
-          radial-gradient(circle at 85% 75%, rgba(188,153,102,.14), transparent 42%),
-          repeating-linear-gradient(-15deg, rgba(120,98,71,.04), rgba(120,98,71,.04) 3px, rgba(245,231,206,.04) 3px, rgba(245,231,206,.04) 6px),
-          linear-gradient(180deg, #f8eed8 0%, #efdfc4 100%);
-        box-shadow: 0 18px 40px rgba(54,39,19,.14);
+      .verse:hover { border-color: var(--line); background: color-mix(in srgb, var(--surface) 90%, #ffffff 10%); }
+      .verse.highlight { background: color-mix(in srgb, var(--accent-soft) 78%, #fff 22%); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+      .verse-num { color: color-mix(in srgb, var(--accent) 80%, #5b4a2b 20%); margin-right: 0.4rem; font-weight: 700; }
+      .list { display: grid; gap: 0.5rem; max-height: 200px; overflow: auto; }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.55rem 0.65rem;
+        display: grid;
+        gap: 0.2rem;
+        background: color-mix(in srgb, var(--surface) 92%, #ffffff 8%);
       }
-      .reading-header h2 { margin: 0; font-size: clamp(1.45rem,2.5vw,2rem); }
-      .reading-header p { margin: .35rem 0 1.2rem; color: var(--ink-soft); }
-      .scripture { font-family: "Crimson Text", Georgia, "Times New Roman", serif; font-size: clamp(1.15rem,1.55vw,1.4rem); line-height: 1.8; }
-      .verse { margin: 0 0 1rem; }
-      .verse-num { font-weight: 700; margin-right: .45rem; color: #7f5f31; }
-      @media (max-width: 900px) {
-        .app-shell { grid-template-columns: 1fr; }
-        .sidebar { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.08); }
-        .book-list, .chapter-list {
-          grid-auto-flow: column;
-          grid-auto-columns: minmax(130px,1fr);
-          overflow-x: auto;
-          padding-bottom: .25rem;
-        }
+      .card .tiny { color: var(--muted); font-size: 0.82rem; }
+      .link-btn {
+        border: 0;
+        background: transparent;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 0;
+        text-align: left;
+      }
+      .kpi { display: grid; gap: 0.35rem; font-size: 0.93rem; }
+      .kpi strong { font-size: 1.1rem; }
+      .results-empty { color: var(--muted); font-size: 0.92rem; }
+
+      @media (max-width: 1060px) {
+        .shell { grid-template-columns: 1fr; }
+        .panel { max-height: none; }
+        .left, .right { order: 2; }
       }
     </style>
   </head>
   <body>
-    <div class="app-shell">
-      <aside class="sidebar" aria-label="Bible navigation">
-        <section class="brand">
-          <h1>Bible Study: God's Truth Edition</h1>
-          <p>Browse books and chapters to begin your devotional reading.</p>
+    <div class="shell">
+      <aside class="panel left" aria-label="Study controls">
+        <section class="section">
+          <h1>Radiant Word Pro</h1>
+          <p class="status">Focused Bible reading, search, highlights, notes, and bookmarks.</p>
         </section>
-        <section class="nav-group">
-          <h2>Books</h2>
-          <div class="book-list" id="book-list"></div>
+        <section class="section stack">
+          <p class="label">Passage</p>
+          <div class="tabs" role="tablist" aria-label="Load source">
+            <button class="btn tab active" id="local-tab" type="button" role="tab" aria-selected="true">Genesis Offline</button>
+            <button class="btn tab" id="remote-tab" type="button" role="tab" aria-selected="false">Any Reference</button>
+          </div>
+          <div id="local-controls" class="stack">
+            <div class="row">
+              <div>
+                <label class="label" for="chapter-select">Chapter</label>
+                <select id="chapter-select"></select>
+              </div>
+              <div>
+                <label class="label" for="translation-select">Translation</label>
+                <select id="translation-select">
+                  <option value="kjv">KJV</option>
+                  <option value="web">WEB</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn primary full" id="load-local" type="button">Load Genesis Chapter</button>
+          </div>
+          <div id="remote-controls" class="stack" hidden>
+            <div>
+              <label class="label" for="reference-input">Reference</label>
+              <input id="reference-input" placeholder="e.g., John 3:16-21" autocomplete="off" />
+            </div>
+            <button class="btn primary full" id="load-reference" type="button">Load Reference</button>
+          </div>
+          <p id="load-status" class="status" aria-live="polite"></p>
         </section>
-        <section class="nav-group">
-          <h2>Chapters</h2>
-          <div class="chapter-list" id="chapter-list"></div>
+        <section class="section stack">
+          <p class="label">Search Current Passage</p>
+          <input id="search-input" placeholder="Search by keyword" autocomplete="off" />
+          <div id="search-results" class="list"></div>
         </section>
       </aside>
-      <main class="content">
-        <article class="reading-panel" aria-label="Scripture reading area">
-          <header class="reading-header">
-            <h2 id="passage-title"></h2>
-            <p id="passage-subtitle">King James Version</p>
-          </header>
-          <section class="scripture" id="scripture-verses"></section>
-        </article>
+
+      <main class="panel main" aria-label="Bible reading area">
+        <header class="topbar">
+          <div>
+            <h2 id="passage-title">Genesis 1</h2>
+            <div class="status" id="passage-meta">Ready</div>
+          </div>
+          <div style="display:flex; gap:0.45rem; align-items:center;">
+            <span class="chip" id="verse-count-chip">0 verses</span>
+            <button class="btn" id="theme-toggle" type="button">Toggle theme</button>
+          </div>
+        </header>
+        <section id="passage" class="passage"></section>
       </main>
+
+      <aside class="panel right" aria-label="Study tools">
+        <section class="section stack">
+          <p class="label">Notes</p>
+          <textarea id="notes" placeholder="Write observations, application, and prayers..."></textarea>
+          <button class="btn soft" id="save-notes" type="button">Save Notes</button>
+          <p id="notes-status" class="status"></p>
+        </section>
+        <section class="section stack">
+          <p class="label">Bookmarks</p>
+          <button class="btn" id="bookmark-current" type="button">Bookmark Current Passage</button>
+          <div id="bookmarks" class="list"></div>
+        </section>
+        <section class="section stack">
+          <p class="label">Reading insights</p>
+          <div class="kpi" id="insights"></div>
+          <div class="row">
+            <button class="btn" id="export-data" type="button">Export Study Data</button>
+            <button class="btn" id="import-data" type="button">Import Study Data</button>
+          </div>
+          <input id="import-file" type="file" accept="application/json" hidden />
+        </section>
+      </aside>
     </div>
 
     <script src="./genesis-data.js"></script>
     <script>
-      function initBibleReader() {
-        const bookList = document.getElementById('book-list');
-        const chapterList = document.getElementById('chapter-list');
-        const passageTitle = document.getElementById('passage-title');
-        const scriptureVerses = document.getElementById('scripture-verses');
-
-        if (typeof SCRIPTURE_DATA === 'undefined' || !Array.isArray(SCRIPTURE_DATA.chapters)) {
-          passageTitle.textContent = 'Unable to load Genesis';
-          scriptureVerses.innerHTML = '<p class="verse">The scripture dataset could not be loaded. Please verify <code>genesis-data.js</code> is available.</p>';
+      (() => {
+        if (typeof SCRIPTURE_DATA === "undefined" || !Array.isArray(SCRIPTURE_DATA.chapters)) {
+          document.body.innerHTML = '<main style="padding:2rem;font-family:Inter,sans-serif;">Unable to load required scripture data.</main>';
           return;
         }
 
-        const state = { activeBook: SCRIPTURE_DATA.book, activeChapter: 1 };
+        const state = {
+          source: 'local',
+          translation: 'kjv',
+          currentRef: 'Genesis 1',
+          verses: [],
+          highlights: loadJSON('rwp-highlights', {}),
+          notes: loadJSON('rwp-notes', {}),
+          bookmarks: loadJSON('rwp-bookmarks', []),
+          streak: loadJSON('rwp-streak', { days: 0, lastRead: null }),
+          activeChapter: 1,
+        };
 
-        function getChapterData(chapterNumber) {
-          return SCRIPTURE_DATA.chapters.find((chapter) => chapter.chapter === chapterNumber);
+        const ui = {
+          localTab: byId('local-tab'),
+          remoteTab: byId('remote-tab'),
+          localControls: byId('local-controls'),
+          remoteControls: byId('remote-controls'),
+          chapterSelect: byId('chapter-select'),
+          translationSelect: byId('translation-select'),
+          loadLocal: byId('load-local'),
+          referenceInput: byId('reference-input'),
+          loadReference: byId('load-reference'),
+          loadStatus: byId('load-status'),
+          passageTitle: byId('passage-title'),
+          passageMeta: byId('passage-meta'),
+          passage: byId('passage'),
+          verseCountChip: byId('verse-count-chip'),
+          searchInput: byId('search-input'),
+          searchResults: byId('search-results'),
+          notes: byId('notes'),
+          saveNotes: byId('save-notes'),
+          notesStatus: byId('notes-status'),
+          bookmarkCurrent: byId('bookmark-current'),
+          bookmarks: byId('bookmarks'),
+          insights: byId('insights'),
+          themeToggle: byId('theme-toggle'),
+          exportData: byId('export-data'),
+          importData: byId('import-data'),
+          importFile: byId('import-file'),
+        };
+
+        const genesisChapters = SCRIPTURE_DATA.chapters;
+        for (const chapter of genesisChapters) {
+          const option = document.createElement('option');
+          option.value = chapter.chapter;
+          option.textContent = `Genesis ${chapter.chapter}`;
+          ui.chapterSelect.append(option);
         }
 
-        function renderBooks() {
-          bookList.innerHTML = '';
-          const bookButton = document.createElement('button');
-          bookButton.type = 'button';
-          bookButton.className = `book${state.activeBook === SCRIPTURE_DATA.book ? ' active' : ''}`;
-          bookButton.textContent = SCRIPTURE_DATA.book;
-          bookButton.addEventListener('click', () => {
-            state.activeBook = SCRIPTURE_DATA.book;
-            state.activeChapter = 1;
-            renderBooks();
-            renderChapters();
-            renderPassage();
-          });
-          bookList.append(bookButton);
-        }
-
-        function renderChapters() {
-          chapterList.innerHTML = '';
-
-          SCRIPTURE_DATA.chapters.forEach((chapterData) => {
-            const chapterButton = document.createElement('button');
-            chapterButton.type = 'button';
-            chapterButton.className = `chapter${state.activeChapter === chapterData.chapter ? ' active' : ''}`;
-            chapterButton.dataset.chapter = String(chapterData.chapter);
-            chapterButton.textContent = String(chapterData.chapter);
-            chapterList.append(chapterButton);
-          });
-        }
-
-        chapterList.addEventListener('click', (event) => {
-          const target = event.target.closest('button.chapter');
-          if (!target) {
-            return;
+        function byId(id) { return document.getElementById(id); }
+        function loadJSON(key, fallback) {
+          try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+          } catch {
+            return fallback;
           }
+        }
+        function persist() {
+          localStorage.setItem('rwp-highlights', JSON.stringify(state.highlights));
+          localStorage.setItem('rwp-notes', JSON.stringify(state.notes));
+          localStorage.setItem('rwp-bookmarks', JSON.stringify(state.bookmarks));
+          localStorage.setItem('rwp-streak', JSON.stringify(state.streak));
+        }
 
-          const selectedChapter = Number(target.dataset.chapter);
-          const chapterData = getChapterData(selectedChapter);
-
-          if (!chapterData) {
-            return;
+        function markReadDay() {
+          const today = new Date().toISOString().slice(0, 10);
+          if (state.streak.lastRead === today) return;
+          if (!state.streak.lastRead) {
+            state.streak.days = 1;
+          } else {
+            const prev = new Date(state.streak.lastRead + 'T00:00:00Z');
+            const now = new Date(today + 'T00:00:00Z');
+            const diff = Math.round((now - prev) / 86400000);
+            state.streak.days = diff === 1 ? state.streak.days + 1 : 1;
           }
+          state.streak.lastRead = today;
+          persist();
+        }
 
-          state.activeChapter = selectedChapter;
-          renderChapters();
-          renderPassage();
-        });
+        function setSource(source) {
+          state.source = source;
+          const local = source === 'local';
+          ui.localControls.hidden = !local;
+          ui.remoteControls.hidden = local;
+          ui.localTab.classList.toggle('active', local);
+          ui.remoteTab.classList.toggle('active', !local);
+          ui.localTab.setAttribute('aria-selected', String(local));
+          ui.remoteTab.setAttribute('aria-selected', String(!local));
+          ui.loadStatus.textContent = local ? 'Offline Genesis mode is active.' : 'Use references like Psalm 23 or Romans 8:1-4.';
+        }
 
         function renderPassage() {
-          const chapter = getChapterData(state.activeChapter);
-          if (!chapter) {
-            passageTitle.textContent = `${SCRIPTURE_DATA.book}`;
-            scriptureVerses.innerHTML = '<p class="verse">Chapter content is unavailable.</p>';
+          const ref = state.currentRef;
+          const highlighted = state.highlights[ref] || [];
+          ui.passage.innerHTML = '';
+          for (const verse of state.verses) {
+            const p = document.createElement('p');
+            p.className = 'verse';
+            if (highlighted.includes(verse.verse)) p.classList.add('highlight');
+            p.dataset.verse = verse.verse;
+
+            const num = document.createElement('span');
+            num.className = 'verse-num';
+            num.textContent = verse.verse;
+            p.append(num, document.createTextNode(verse.text));
+            ui.passage.append(p);
+          }
+          ui.verseCountChip.textContent = `${state.verses.length} verses`;
+          ui.notes.value = state.notes[ref] || '';
+          renderSearch(ui.searchInput.value.trim());
+          renderInsights();
+          markReadDay();
+        }
+
+        function renderSearch(query) {
+          ui.searchResults.innerHTML = '';
+          if (!query) {
+            const empty = document.createElement('div');
+            empty.className = 'results-empty';
+            empty.textContent = 'Type a word to find verses in the current passage.';
+            ui.searchResults.append(empty);
             return;
           }
+          const needle = query.toLowerCase();
+          const matches = state.verses.filter(v => v.text.toLowerCase().includes(needle));
+          if (!matches.length) {
+            const empty = document.createElement('div');
+            empty.className = 'results-empty';
+            empty.textContent = 'No matching verses found.';
+            ui.searchResults.append(empty);
+            return;
+          }
+          for (const m of matches) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const jump = document.createElement('button');
+            jump.type = 'button';
+            jump.className = 'link-btn';
+            jump.textContent = `${state.currentRef} v${m.verse}`;
+            jump.addEventListener('click', () => {
+              const el = ui.passage.querySelector(`[data-verse="${m.verse}"]`);
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+            const snippet = document.createElement('div');
+            snippet.className = 'tiny';
+            snippet.textContent = m.text;
+            card.append(jump, snippet);
+            ui.searchResults.append(card);
+          }
+        }
 
-          passageTitle.textContent = `${SCRIPTURE_DATA.book} ${chapter.chapter}`;
-          scriptureVerses.innerHTML = '';
-
-          chapter.verses.forEach((verse) => {
-            const verseParagraph = document.createElement('p');
-            verseParagraph.className = 'verse';
-
-            const verseNum = document.createElement('span');
-            verseNum.className = 'verse-num';
-            verseNum.textContent = verse.verse;
-
-            verseParagraph.append(verseNum, document.createTextNode(verse.text));
-            scriptureVerses.append(verseParagraph);
+        function renderBookmarks() {
+          ui.bookmarks.innerHTML = '';
+          if (!state.bookmarks.length) {
+            const p = document.createElement('div');
+            p.className = 'results-empty';
+            p.textContent = 'No bookmarks yet.';
+            ui.bookmarks.append(p);
+            return;
+          }
+          state.bookmarks.forEach((bookmark, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const open = document.createElement('button');
+            open.type = 'button';
+            open.className = 'link-btn';
+            open.textContent = bookmark.ref;
+            open.addEventListener('click', () => loadReference(bookmark.ref, bookmark.translation));
+            const tiny = document.createElement('div');
+            tiny.className = 'tiny';
+            tiny.textContent = `Saved ${new Date(bookmark.savedAt).toLocaleString()}`;
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn';
+            remove.textContent = 'Remove';
+            remove.addEventListener('click', () => {
+              state.bookmarks.splice(index, 1);
+              persist();
+              renderBookmarks();
+            });
+            card.append(open, tiny, remove);
+            ui.bookmarks.append(card);
           });
         }
 
-        renderBooks();
-        renderChapters();
-        renderPassage();
-      }
+        function renderInsights() {
+          const words = state.verses.reduce((sum, v) => sum + v.text.split(/\s+/).filter(Boolean).length, 0);
+          const highlighted = (state.highlights[state.currentRef] || []).length;
+          ui.insights.innerHTML = `
+            <div>Total words: <strong>${words.toLocaleString()}</strong></div>
+            <div>Highlighted verses: <strong>${highlighted}</strong></div>
+            <div>Reading streak: <strong>${state.streak.days} day${state.streak.days === 1 ? '' : 's'}</strong></div>
+            <div>Bookmarks: <strong>${state.bookmarks.length}</strong></div>
+          `;
+        }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initBibleReader);
-      } else {
-        initBibleReader();
-      }
+        async function loadGenesisChapter(chapterNumber) {
+          const chapter = genesisChapters.find(c => c.chapter === Number(chapterNumber));
+          if (!chapter) {
+            ui.loadStatus.textContent = 'Chapter could not be found.';
+            return;
+          }
+          state.currentRef = `Genesis ${chapter.chapter}`;
+          state.verses = chapter.verses;
+          ui.passageTitle.textContent = state.currentRef;
+          ui.passageMeta.textContent = `Offline data • ${state.translation.toUpperCase()}`;
+          ui.loadStatus.textContent = `Loaded ${state.currentRef} from local data.`;
+          renderPassage();
+          persist();
+        }
+
+        async function loadReference(reference, translation = state.translation) {
+          const ref = reference.trim();
+          if (!ref) {
+            ui.loadStatus.textContent = 'Enter a valid reference first.';
+            return;
+          }
+          ui.loadStatus.textContent = 'Loading passage…';
+          try {
+            const url = `/api/passage?reference=${encodeURIComponent(ref)}&translation=${encodeURIComponent(translation)}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            if (!data.verses || !Array.isArray(data.verses) || !data.verses.length) {
+              throw new Error('No verse data received');
+            }
+            state.currentRef = data.reference || ref;
+            state.translation = translation;
+            state.verses = data.verses.map(v => ({ verse: Number(v.verse), text: v.text.trim() }));
+            ui.passageTitle.textContent = state.currentRef;
+            ui.passageMeta.textContent = `API source • ${translation.toUpperCase()}`;
+            ui.loadStatus.textContent = `Loaded ${state.currentRef}.`;
+            renderPassage();
+            persist();
+          } catch (error) {
+            ui.loadStatus.textContent = `Unable to load reference. ${error.message}`;
+          }
+        }
+
+        ui.localTab.addEventListener('click', () => setSource('local'));
+        ui.remoteTab.addEventListener('click', () => setSource('remote'));
+
+        ui.loadLocal.addEventListener('click', () => {
+          state.translation = ui.translationSelect.value;
+          state.activeChapter = Number(ui.chapterSelect.value || 1);
+          loadGenesisChapter(state.activeChapter);
+        });
+
+        ui.loadReference.addEventListener('click', () => {
+          state.translation = ui.translationSelect.value;
+          loadReference(ui.referenceInput.value, state.translation);
+        });
+
+        ui.searchInput.addEventListener('input', (e) => renderSearch(e.target.value.trim()));
+
+        ui.passage.addEventListener('click', (event) => {
+          const verse = event.target.closest('.verse');
+          if (!verse) return;
+          const verseNum = Number(verse.dataset.verse);
+          const key = state.currentRef;
+          state.highlights[key] = state.highlights[key] || [];
+          const idx = state.highlights[key].indexOf(verseNum);
+          if (idx >= 0) {
+            state.highlights[key].splice(idx, 1);
+            verse.classList.remove('highlight');
+          } else {
+            state.highlights[key].push(verseNum);
+            verse.classList.add('highlight');
+          }
+          persist();
+          renderInsights();
+        });
+
+        ui.saveNotes.addEventListener('click', () => {
+          state.notes[state.currentRef] = ui.notes.value.trim();
+          persist();
+          ui.notesStatus.textContent = `Saved notes for ${state.currentRef} at ${new Date().toLocaleTimeString()}.`;
+        });
+
+        ui.bookmarkCurrent.addEventListener('click', () => {
+          const exists = state.bookmarks.some(b => b.ref === state.currentRef && b.translation === state.translation);
+          if (exists) {
+            ui.loadStatus.textContent = 'That passage is already bookmarked.';
+            return;
+          }
+          state.bookmarks.unshift({
+            ref: state.currentRef,
+            translation: state.translation,
+            savedAt: Date.now(),
+          });
+          if (state.bookmarks.length > 50) state.bookmarks.length = 50;
+          persist();
+          renderBookmarks();
+          renderInsights();
+          ui.loadStatus.textContent = `Bookmarked ${state.currentRef}.`;
+        });
+
+        ui.themeToggle.addEventListener('click', () => {
+          const root = document.documentElement;
+          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          if (next === 'light') {
+            delete root.dataset.theme;
+          } else {
+            root.dataset.theme = 'dark';
+          }
+          localStorage.setItem('rwp-theme', next);
+        });
+
+        ui.exportData.addEventListener('click', () => {
+          const payload = {
+            exportedAt: new Date().toISOString(),
+            highlights: state.highlights,
+            notes: state.notes,
+            bookmarks: state.bookmarks,
+            streak: state.streak,
+          };
+          const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'radiant-word-pro-study-data.json';
+          a.click();
+          URL.revokeObjectURL(url);
+          ui.loadStatus.textContent = 'Exported study data.';
+        });
+
+        ui.importData.addEventListener('click', () => ui.importFile.click());
+        ui.importFile.addEventListener('change', async () => {
+          const file = ui.importFile.files?.[0];
+          if (!file) return;
+          try {
+            const text = await file.text();
+            const parsed = JSON.parse(text);
+            state.highlights = parsed.highlights || {};
+            state.notes = parsed.notes || {};
+            state.bookmarks = Array.isArray(parsed.bookmarks) ? parsed.bookmarks : [];
+            state.streak = parsed.streak || { days: 0, lastRead: null };
+            persist();
+            renderPassage();
+            renderBookmarks();
+            ui.loadStatus.textContent = 'Imported study data successfully.';
+          } catch {
+            ui.loadStatus.textContent = 'Import failed. Please use a valid export JSON file.';
+          } finally {
+            ui.importFile.value = '';
+          }
+        });
+
+        const savedTheme = localStorage.getItem('rwp-theme');
+        if (savedTheme === 'dark') document.documentElement.dataset.theme = 'dark';
+
+        renderBookmarks();
+        setSource('local');
+        ui.chapterSelect.value = String(state.activeChapter);
+        loadGenesisChapter(state.activeChapter);
+      })();
     </script>
   </body>
 </html>
